@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\FileController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -15,3 +17,6 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::get('files', [FileController::class,'index'])->name('files.index');
+Route::post('files', [FileController::class,'storeFile'])->name('files.index');
