@@ -7,7 +7,7 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label for="file">Archivo</label>
-                        <input type="file" wire:model.lazy="file" class="w-full py-2 rounded">
+                        <input type="file" wire:model="file" class="w-full py-2 rounded">
                         @error('file')
                         <span class="text-red-600">{{ $message }}</span>
                         @enderror
@@ -46,7 +46,7 @@
                     </div>
                     <div>
                         <label for="registros">Número de Registros</label>
-                        <input type="text" wire:model.lazy="registros" class="w-full py-2 rounded" readonly>
+                        <input type="text" wire:model.lazy="registros" class="w-full py-2 rounded">
                         @error('registros')
                         <span class="text-red-600">{{ $message }}</span>
                         @enderror
@@ -56,7 +56,7 @@
                     <button type="submit" class="px-4 py-2 text-white bg-indigo-600 rounded">
                         Submit
                     </button>
-                    <button type="submit" wire:click="update" class="px-4 py-2 ml-2 text-white bg-indigo-600 rounded">
+                    <button type="button" wire:click="update" class="px-4 py-2 ml-2 text-white bg-indigo-600 rounded">
                         Update
                     </button>
                 </div>

@@ -8,6 +8,7 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FilesImport;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class FileForm extends Component
@@ -24,8 +25,7 @@ class FileForm extends Component
     public $file;
 
     protected $rules = [
-        'idCanasta' => 'required',
-        'guid' => 'required',
+        'idCanasta' => 'required|unique:files,idCanasta',
         'esquema' => 'required',
         'registros' => 'required',
         'estado' => 'required',
@@ -36,24 +36,44 @@ class FileForm extends Component
     public function storeFile()
     {
         $this->validate();
+        Log::info('Validated successfully');
         $this->importFile();
-        File::create([
+        Log::info('File imported successfully');
+        Log::info('Data to be saved', [
             'idCanasta' => $this->idCanasta,
-            'GUID' => $this->guid,
             'esquema' => $this->esquema,
             'registros' => $this->registros,
             'estado' => $this->estado,
             'fechaCargue' => $this->fechaCargue
         ]);
+        File::create([
+            'idCanasta' => $this->idCanasta,
+            'esquema' => $this->esquema,
+            'registros' => $this->registros,
+            'estado' => $this->estado,
+            'fechaCargue' => $this->fechaCargue,
+            'GUID' => uniqid(),
+            'tipoArchivo' => 1,
+        ]);
+        Log::info('File saved to database');
         $this->reset();
+    }
+
+    public function updatedFile()
+    {
+        if ($this->file) {
+            $this->importFile();
+        }
     }
 
     public function importFile()
     {
+        Log::info('Iniciando import');
         $path = $this->file->store('files');
         $rowCount = Excel::toCollection(new FilesImport, $path)->first()->count();
         $this->registros = $rowCount - 1; // Restar 1 para omitir la fila del encabezado
-        Excel::import(new FilesImport, $path);
+        Log::info('Número de registros importados: ' . $this->registros);
+       // Excel::import(new FilesImport, $path);
         Storage::delete($path); // Eliminar el archivo después de la importación
     }
 
