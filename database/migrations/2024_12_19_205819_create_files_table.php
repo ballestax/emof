@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('registros');
             $table->integer('estado');
             $table->date('fechaCargue');
-            $table->string('file');
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

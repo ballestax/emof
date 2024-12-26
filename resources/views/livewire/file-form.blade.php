@@ -23,14 +23,23 @@
                 <div class="grid grid-cols-2 gap-4 mt-4">
                     <div>
                         <label for="esquema">Esquema</label>
-                        <input type="text" wire:model.lazy="esquema" class="w-full py-2 rounded">
+                        <select wire:model.lazy="esquema" class="w-full py-2 rounded">
+                            <option value="">Seleccione un esquema</option>
+                            <option value="nuevo">Esquema nuevo</option>
+                            <option value="anterior">Esquema anterior</option>
+                        </select>
                         @error('esquema')
                         <span class="text-red-600">{{ $message }}</span>
                         @enderror
                     </div>
                     <div>
                         <label for="estado">Estado</label>
-                        <input type="text" wire:model.lazy="estado" class="w-full py-2 rounded">
+                        <select wire:model.lazy="estado" class="w-full py-2 rounded">
+                            <option value="">Seleccione un estado</option>
+                            <option value="Cargado">Cargado</option>
+                            <option value="Procesado">Procesado</option>
+                            <option value="Procesado - En tramite">Procesado - En tramite</option>
+                        </select>
                         @error('estado')
                         <span class="text-red-600">{{ $message }}</span>
                         @enderror
@@ -52,6 +61,10 @@
                         @enderror
                     </div>
                 </div>
+                @if($fileId)
+                    <input type="hidden" wire:model="fileId" value="{{ $fileId }}">
+                @endif
+
                 <div class="flex justify-end mt-4">
                     <button type="submit" class="px-4 py-2 text-white bg-indigo-600 rounded">
                         Submit
