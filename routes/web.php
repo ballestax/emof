@@ -18,5 +18,11 @@ Route::middleware([
     })->name('dashboard');
 });
 
-Route::get('files', [FileController::class,'index'])->name('files.index');
-Route::post('files', [FileController::class,'storeFile'])->name('files.index');
+#Route::get('files', [FileController::class,'index'])->name('files.index');
+#Route::post('files', [FileController::class,'storeFile'])->name('files.index');
+#Route::get('/files/{id}', [FileController::class, 'show'])->name('files.show');
+
+Route::resource('files', FileController::class)
+        ->only('index', 'create', 'show', 'edit');
+
+

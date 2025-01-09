@@ -9,6 +9,7 @@ use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\FilesImport;
 use App\Models\Register;
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -27,6 +28,7 @@ class FileForm extends Component
     public $fechaCargue;
     public $fileId;
     public $file;
+    public $tipoArchivo;
 
     protected $rules = [
         'idCanasta' => 'required|unique:files,idCanasta',
@@ -186,6 +188,16 @@ class FileForm extends Component
         Log::info('Importación completada y registros asociados al archivo');
     }
 
+    public function updatedFile(){
+        $path = $this->file;
+        $data = Excel::toArray(new \stdClass, $path);
+
+        $rowCount = count($data[0]);
+        $this->registros = $rowCount - 1;
+        Log::info('Número de registros a importar: ' . $this->registros);
+        return $rowCount;
+    }
+
     private function isTipo1($headers, $columnCount)
     {
         // Verificar si el archivo corresponde al tipo 1 según los encabezados y el número de columnas
@@ -289,8 +301,9 @@ class FileForm extends Component
         File::destroy($id);
     }
 
-    public function render()
+    public function render():Renderable
     {
         return view('livewire.file-form', ['files' => File::latest()->paginate(10)]);
     }
+  
 }

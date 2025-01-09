@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class File extends Model
@@ -14,7 +15,11 @@ class File extends Model
         'registros',
         'estado',
         'fechaCargue',
-        'file'
+        'file',
     ];
 
+    public function getFechaCargueAttribute($value)
+    {
+        return Carbon::parse($value);
+    }
 }
