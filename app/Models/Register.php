@@ -40,4 +40,13 @@ class Register extends Model
         'id_examen',
         'tipo_archivo',
     ];
+
+    public function setTableBasedOnFileType($tipoArchivo)
+    {
+        if ($tipoArchivo === 'tipo_1') {
+            $this->setTable('registers_v1'); // Usar la tabla "registers_v1"
+        } elseif ($tipoArchivo === 'tipo_2') {
+            $this->setTable('registers_v2'); // Usar la tabla "registers_v2"
+        }
+    }
 }

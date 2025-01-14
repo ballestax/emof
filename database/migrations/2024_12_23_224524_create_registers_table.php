@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('registers', function (Blueprint $table) {
+        Schema::create('registers_v1', function (Blueprint $table) {
             $table->id();
-            $table->integer('idFile')->nullable();
+            $table->integer('idFile');
             $table->integer('consecutivo')->nullable();
             $table->string('tipo_documento')->nullable();
             $table->string('numero_documento')->nullable();
@@ -22,11 +22,10 @@ return new class extends Migration
             $table->string('primer_apellido')->nullable();
             $table->string('segundo_apellido')->nullable();
             $table->string('codigo_cups')->nullable();
-            $table->string('codigo_cups2_anticuerpos')->nullable();
             $table->string('registro_sanitario_prueba')->nullable();
             $table->string('codigo_eps')->nullable();
             $table->string('nombre_eps')->nullable();
-            $table->string('conmpra_masiva')->nullable();
+            $table->string('compra_masiva')->nullable();
             $table->string('valor_prueba')->nullable();
             $table->string('nit_ips_tomo_muestra')->nullable();
             $table->string('nombre_ips_tomo_muestra')->nullable();
@@ -42,9 +41,34 @@ return new class extends Migration
             $table->string('resultado_prueba')->nullable();
             $table->string('fecha_resultado')->nullable();
             $table->string('tipo_procedimiento')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('registers_v2', function (Blueprint $table) {
+            $table->id();
+            $table->integer('idFile');
+            $table->integer('consecutivo')->nullable();
+            $table->string('tipo_documento')->nullable();
+            $table->string('numero_documento')->nullable();
+            $table->string('primer_nombre')->nullable();
+            $table->string('segundo_nombre')->nullable();
+            $table->string('primer_apellido')->nullable();
+            $table->string('segundo_apellido')->nullable();
+            $table->string('codigo_cups')->nullable();
+            $table->string('codigo_cups2_anticuerpos')->nullable();
+            $table->string('registro_sanitario_prueba')->nullable();
+            $table->string('codigo_eps')->nullable();
+            $table->string('nombre_eps')->nullable();
             $table->string('concepto_presentacion')->nullable();
+            $table->string('nit')->nullable();
+            $table->string('nombre')->nullable();
+            $table->string('codigo_habilitacion')->nullable();
+            $table->string('valor')->nullable();
+            $table->string('no_factura')->nullable();
+            $table->string('fecha_toma')->nullable();
+            $table->string('fecha_resultado')->nullable();
+            $table->string('resultado_prueba')->nullable();
             $table->string('id_examen')->nullable();
-            $table->string('tipo_archivo')->nullable();
             $table->timestamps();
         });
     }
@@ -55,5 +79,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('registers');
+        Schema::dropIfExists('registers_v1');
+        Schema::dropIfExists('registers_v2');
     }
 };

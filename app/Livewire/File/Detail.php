@@ -6,6 +6,7 @@ use App\Imports\GlossImport;
 use App\Models\File;
 use App\Models\Register;
 use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
@@ -38,13 +39,17 @@ class Detail extends Component
 
     public function render(): Renderable
     {
+        $tableName = $this->file->esquema == 'nuevo' ? 'registers_v2' : 'registers_v1';
 
-        $registers = Register::where('idFile', $this->file->id)
-            ->paginate($this->perPage);
+        $registers = DB::table($tableName)
+        ->where('idFile', $this->file->id)
+        ->paginate($this->perPage);
+
         return view(
             'livewire.file.detail',
             [
                 'registers' => $registers,
+                'fileType' => $this->file->esquema,
             ]
         );
     }

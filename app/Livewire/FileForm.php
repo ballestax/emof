@@ -7,8 +7,6 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\FilesImport;
-use App\Models\Register;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -97,8 +95,10 @@ class FileForm extends Component
         // Verificación de tipo de archivo
         if ($this->isTipo1($headers, $columnCount)) {
             $this->tipoArchivo = 'tipo_1'; // Establecer el tipo de archivo como 'tipo_1'
+            $registerTable = 'registers_v1';
         } elseif ($this->isTipo2($headers, $columnCount)) {
             $this->tipoArchivo = 'tipo_2'; // Establecer el tipo de archivo como 'tipo_2'
+            $registerTable = 'registers_v2';
         } else {
             Log::error('Archivo con formato desconocido o inválido');
             Storage::delete($path); // Eliminar el archivo después de la verificación
@@ -113,42 +113,10 @@ class FileForm extends Component
         // Empezamos a procesar desde la segunda fila (omitiendo el encabezado)
         $rows = array_slice($data[0], 1); // Omitir la primera fila (encabezado)
 
-        // Si el archivo es de tipo 1, insertamos en la tabla "registers" según su estructura
+        DB::beginTransaction();
         if ($this->tipoArchivo === 'tipo_1') {
             foreach ($rows as $row) {
-                Register::create([
-                    'idFile' => $fileId,
-                    'consecutivo' => $row[0] ?? null,
-                    'tipo_documento' => $row[1] ?? null,
-                    'numero_documento' => $row[2] ?? null,
-                    'primer_nombre' => $row[3] ?? null,
-                    'segundo_nombre' => $row[4] ?? null,
-                    'primer_apellido' => $row[5] ?? null,
-                    'segundo_apellido' => $row[6] ?? null,
-                    'codigo_cups' => $row[7] ?? null,
-                    'codigo_cups2_anticuerpos' => $row[8] ?? null,
-                    'registro_sanitario_prueba' => $row[9] ?? null,
-                    'codigo_eps' => $row[10] ?? null,
-                    'nombre_eps' => $row[11] ?? null,
-                    'concepto_presentacion' => $row[12] ?? null,
-                    'nit_ips_tomo_muestra' => $row[13] ?? null,
-                    'nombre_ips_tomo_muestra' => $row[14] ?? null,
-                    'codigo_habilitacion_ips_tomo_muestra' => $row[15] ?? null,
-                    'valor_toma_muestra_a_cobrar_adres' => $row[16] ?? null,
-                    'no_factura_muestra' => $row[17] ?? null,
-                    'fecha_toma' => $row[18] ?? null,
-                    'fecha_resultado' => $row[19] ?? null,
-                    'resultado_prueba' => $row[20] ?? null,
-                    'id_examen' => $row[21] ?? null,
-                    'tipo_archivo' => 'tipo_1',  // 'tipo_1' está fijo
-                ]);
-            }
-        }
-
-        // Si el archivo es de tipo 2, insertamos en la tabla "registers" según su estructura
-        if ($this->tipoArchivo === 'tipo_2') {
-            foreach ($rows as $row) {
-                Register::create([
+                DB::table($registerTable)->insert([
                     'idFile' => $fileId,
                     'consecutivo' => $row[0] ?? null,
                     'tipo_documento' => $row[1] ?? null,
@@ -177,10 +145,43 @@ class FileForm extends Component
                     'resultado_prueba' => $row[24] ?? null,
                     'fecha_resultado' => $row[25] ?? null,
                     'tipo_procedimiento' => $row[26] ?? null,
-                    'tipo_archivo' => 'tipo_2',  // 'tipo_1' está fijo
                 ]);
             }
         }
+
+        // Si el archivo es de tipo 2, insertamos en la tabla "registers" según su estructura
+        if ($this->tipoArchivo === 'tipo_2') {
+            Log::info('Insertando registro en la tabla registers_v2');
+            foreach ($rows as $row) {
+                DB::table($registerTable)->insert([
+                    'idFile' => $fileId,
+                    'consecutivo' => $row[0] ?? null,
+                    'tipo_documento' => $row[1] ?? null,
+                    'numero_documento' => $row[2] ?? null,
+                    'primer_nombre' => $row[3] ?? null,
+                    'segundo_nombre' => $row[4] ?? null,
+                    'primer_apellido' => $row[5] ?? null,
+                    'segundo_apellido' => $row[6] ?? null,
+                    'codigo_cups' => $row[7] ?? null,
+                    'codigo_cups2_anticuerpos' => $row[8] ?? null,
+                    'registro_sanitario_prueba' => $row[9] ?? null,
+                    'codigo_eps' => $row[10] ?? null,
+                    'nombre_eps' => $row[11] ?? null,
+                    'concepto_presentacion' => $row[12] ?? null,
+                    'nit' => $row[13] ?? null,
+                    'nombre' => $row[14] ?? null,
+                    'codigo_habilitacion' => $row[15] ?? null,
+                    'valor' => $row[16] ?? null,
+                    'no_factura' => $row[17] ?? null,
+                    'fecha_toma' => $row[18] ?? null,
+                    'fecha_resultado' => $row[19] ?? null,
+                    'resultado_prueba' => $row[20] ?? null,
+                    'id_examen' => $row[21] ?? null,
+                ]);
+            }
+        }
+
+        DB::commit();
 
         // Eliminar el archivo después de la importación
         Storage::delete($path);
@@ -188,7 +189,8 @@ class FileForm extends Component
         Log::info('Importación completada y registros asociados al archivo');
     }
 
-    public function updatedFile(){
+    public function updatedFile()
+    {
         $path = $this->file;
         $data = Excel::toArray(new \stdClass, $path);
 
@@ -198,10 +200,10 @@ class FileForm extends Component
         return $rowCount;
     }
 
-    private function isTipo1($headers, $columnCount)
+    private function isTipo2($headers, $columnCount)
     {
         // Verificar si el archivo corresponde al tipo 1 según los encabezados y el número de columnas
-        $expectedHeadersTipo1 = [
+        $expectedHeadersTipo2 = [
             'CONSECUTIVO',
             'TIPO_DOCUMENTO',
             'NUMERO_DOCUMENTO',
@@ -226,13 +228,13 @@ class FileForm extends Component
             'ID_EXAMEN'
         ];
 
-        return $columnCount == count($expectedHeadersTipo1) && $headers == $expectedHeadersTipo1;
+        return $columnCount == count($expectedHeadersTipo2) && $headers == $expectedHeadersTipo2;
     }
 
-    private function isTipo2($headers, $columnCount)
+    private function isTipo1($headers, $columnCount)
     {
         // Verificar si el archivo corresponde al tipo 2 según los encabezados y el número de columnas
-        $expectedHeadersTipo2 = [
+        $expectedHeadersTipo1 = [
             'CONSECUTIVO',
             'TIPO_DOCUMENTO',
             'NUMERO_DOCUMENTO',
@@ -260,10 +262,9 @@ class FileForm extends Component
             'RESULTADO_PRUEBA',
             'FECHA_RESULTADO',
             'TIPO_PROCEDIMIENTO'
-
         ];
 
-        return $columnCount == count($expectedHeadersTipo2) && $headers == $expectedHeadersTipo2;
+        return $columnCount == count($expectedHeadersTipo1) && $headers == $expectedHeadersTipo1;
     }
 
     public function edit($id)
@@ -301,9 +302,8 @@ class FileForm extends Component
         File::destroy($id);
     }
 
-    public function render():Renderable
+    public function render(): Renderable
     {
         return view('livewire.file-form', ['files' => File::latest()->paginate(10)]);
     }
-  
 }

@@ -79,50 +79,109 @@
                 <thead class="bg-gray-100">
                     <tr>
                         @if ($isFullVersion)
-                        @foreach(['Consecutivo', 'Tipo Documento', 'Número Documento', 'Nombre Completo', 'Código CUPS', 'Código CUPS2 Anticuerpos', 'Registro Sanitario Prueba', 'Código EPS', 'Nombre EPS', 'Compra Masiva', 'Valor Prueba', 'Valor Toma Muestra', 'Valor Procesamiento', 'Fecha Toma', 'Resultado Prueba', 'Fecha Resultado', 'Tipo de Archivo', 'Archivo Asociado'] as $header)
-                        <th class="px-2 py-1 text-left text-gray-500 border-b border-gray-200 bg-gray-50 text-sm">{{ __($header) }}</th>
+                        @if($fileType == 'nuevo')
+                        @foreach(['Consecutivo', 'Tipo Documento', 'Número Documento', 'Primer Nombre','Segundo Nombre','Primer Apellido', 'Segundo Apellido', 'Código CUPS', 'Código CUPS2 Anticuerpos', 'Registro Sanitario Prueba', 'Código EPS', 'Nombre EPS', 'Concepto presentacion', 'NIT', 'Nombre', 'Codigo Habilitacion', 'Valor', 'No Factura', 'Fecha Toma', 'Fecha Resultado', 'Resultado', 'ID Examen'] as $header)
+                        <th class="px-2 py-1 text-left text-gray-500 border-b border-gray-200 bg-gray-50 text-xs break-words">{{ __($header) }}</th>
                         @endforeach
                         @else
-                        @foreach(['Consecutivo', 'Tipo Documento', 'Número Documento', 'Nombre Completo', 'Factura Toma','Valor Toma', 'Factura Procesamiento','Valor Procesamiento','Fecha Toma', 'Resultado Prueba'] as $header)
-                        <th class="px-2 py-1 text-left text-gray-500 border-b border-gray-200 bg-gray-50 text-sm">{{ __($header) }}</th>
+                        @foreach(['Consecutivo', 'Tipo Documento', 'Número Documento', 'Primer Nombre','Segundo Nombre','Primer Apellido', 'Segundo Apellido', 'Código CUPS', 'Registro Sanitario Prueba', 'Código EPS', 'Nombre EPS', 'Compra Masiva', 'Valor Prueba','NIT IPS Tomo Muestra', 'Nombre IPS Tomo Muestra','Codigo Habilitacion IPS', 'Valor Toma Muestra', 'Factura Muestra','NIT Laboratorio','Nombre Laboratorio','Codigo Habilitacion Lab.','Valor Procesamiento', 'Factura Procesamiento','Fecha Toma', 'Resultado Prueba', 'Fecha Resultado', 'Tipo Procedimiento'] as $header)
+                        <th class="px-2 py-1 text-left text-gray-500 border-b border-gray-200 bg-gray-50 text-xs break-words">{{ __($header) }}</th>
                         @endforeach
+                        @endif
+                        @else
+                        @if($fileType == 'nuevo')
+                        @foreach(['Consecutivo', 'Tipo Documento', 'Número Documento', 'Nombre Completo', 'Factura','Valor', 'Fecha Procesamiento','Fecha Resultado','Resultado Prueba', 'IPS'] as $header)
+                        <th class="px-1 py-1 text-left text-gray-500 border-b border-gray-200 bg-gray-50 text-xs break-words">{{ __($header) }}</th>
+                        @endforeach
+                        @else
+                        @foreach(['Consecutivo', 'Tipo Documento', 'Número Documento', 'Nombre Completo', 'Factura Toma', 'Valor Toma', 'Factura Procesamiento', 'Valor Procesamiento', 'Fecha Resultado', 'Resultado'] as $header)
+                        <th class="px-1 py-1 text-left text-gray-500 border-b border-gray-200 bg-gray-50 text-xs break-words">{{ __($header) }}</th>
+                        @endforeach
+                        @endif
                         @endif
                     </tr>
                 </thead>
                 <tbody class="bg-white">
-
                     @foreach($registers as $register)
                     <tr>
                         @if ($isFullVersion)
+                        @if($fileType == 'nuevo')
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->consecutivo }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->tipo_documento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->numero_documento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->primer_nombre }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->segundo_nombre }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->primer_apellido }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->segundo_apellido }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_cups }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_cups2_anticuerpos }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->registro_sanitario_prueba }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_eps }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre_eps }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->concepto_presentacion }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nit }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_habilitacion }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm text-right">{{ $register->valor ? '$' . number_format($register->valor, 0) : 0 }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->no_factura }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_toma ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_toma)->format('d/m/Y') : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_resultado ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_resultado)->format('d/m/Y') : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->resultado_prueba }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->id_examen }}</td>
+                        @else
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->consecutivo }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->tipo_documento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->numero_documento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->primer_nombre }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->segundo_nombre }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->primer_apellido }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->segundo_apellido }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_cups }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->registro_sanitario_prueba }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_eps }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre_eps }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->compra_masiva }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm text-right">{{ $register->valor_prueba ? '$' . number_format($register->valor_prueba, 0) : 0 }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nit_ips_tomo_muestra }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre_ips_tomo_muestra }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_habilitacion_ips_tomo_muestra }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm text-right">{{ $register->valor_toma_muestra_a_cobrar_adres ? '$' . number_format($register->valor_toma_muestra_a_cobrar_adres, 0) : 0 }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->no_factura_muestra }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nit_laboratorio_procesamiento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre_laboratorio_procesamiento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_habilitacion_procesamiento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm text-right">{{ $register->valor_procesamiento_a_cobrar_adres ? '$' . number_format($register->valor_procesamiento_a_cobrar_adres, 0) : 0 }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->no_factura_procesamiento }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_toma ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_toma)->format('d/m/Y') : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->resultado_prueba }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_resultado ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_resultado)->format('d/m/Y') : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->tipo_procedimiento }}</td>
+                        @endif
+                        @else
+                        @if($fileType == 'nuevo')
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->consecutivo }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->tipo_documento }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->numero_documento }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->primer_nombre }} {{ $register->segundo_nombre }} {{ $register->primer_apellido }} {{ $register->segundo_apellido }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_cups }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_cups2_anticuerpos ?? 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->registro_sanitario_prueba ?? 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->codigo_eps }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre_eps }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->compra_masiva ? 'Sí' : 'No' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->valor_prueba ? '$' . number_format($register->valor_prueba, 2) : 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->valor_toma_muestra_a_cobrar_adres ? '$' . number_format($register->valor_toma_muestra_a_cobrar_adres, 2) : 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->valor_procesamiento_a_cobrar_adres ? '$' . number_format($register->valor_procesamiento_a_cobrar_adres, 2) : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->no_factura }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->valor ? '$' . number_format($register->valor, 0) : 'N/A' }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_toma ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_toma)->format('d/m/Y') : 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->resultado_prueba }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_resultado ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_resultado)->format('d/m/Y') : 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->tipo_archivo }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->file ? $register->file->nombre : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->resultado_prueba == 0 ? 'NEGATIVO':'POSITIVO'}}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->nombre }}</td>
+
                         @else
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->consecutivo }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->tipo_documento }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->numero_documento }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->primer_nombre }} {{ $register->segundo_nombre }} {{ $register->primer_apellido }} {{ $register->segundo_apellido }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->no_factura_muestra }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->valor_toma_muestra_a_cobrar_adres ? '$' . number_format($register->valor_toma_muestra_a_cobrar_adres, 2) : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm text-right">{{ $register->valor_toma_muestra_a_cobrar_adres ? '$' . number_format($register->valor_toma_muestra_a_cobrar_adres, 0) : 0 }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->no_factura_procesamiento }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->valor_procesamiento_a_cobrar_adres ? '$' . number_format($register->valor_procesamiento_a_cobrar_adres, 2) : 'N/A' }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm text-right">{{ $register->valor_procesamiento_a_cobrar_adres ? '$' . number_format($register->valor_procesamiento_a_cobrar_adres, 0) : 0 }}</td>
                         <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->fecha_toma ? \Carbon\Carbon::createFromFormat('d/m/Y', $register->fecha_toma)->format('d/m/Y') : 'N/A' }}</td>
-                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->resultado_prueba }}</td>
+                        <td class="border border-gray-300 px-2 py-1 text-sm">{{ $register->resultado_prueba == 0 ? 'NEGATIVO':'POSITIVO'}}</td>
+                        @endif
                         @endif
                     </tr>
                     @endforeach
