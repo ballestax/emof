@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('primer_apellido')->nullable();
             $table->string('segundo_apellido')->nullable();
             $table->string('codigo_cups')->nullable();
+            $table->string('codigo_cups2_anticuerpos')->nullable();
             $table->string('registro_sanitario_prueba')->nullable();
             $table->string('codigo_eps')->nullable();
             $table->string('nombre_eps')->nullable();

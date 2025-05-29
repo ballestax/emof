@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('pay_registers', function (Blueprint $table) {
             $table->id();
+            $table->integer('id_register')->nullable();
+            $table->integer('consecutivo')->nullable();
+            $table->string('tipo_documento')->nullable();
+            $table->string('numero_documento')->nullable();
+            $table->timestamp('fecha_registro')->nullable();
+            $table->date('fecha_pago')->nullable();
+            $table->integer('id_proceso')->nullable();
+            $table->timestamps();
         });
     }
 
